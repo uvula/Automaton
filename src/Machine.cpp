@@ -227,6 +227,7 @@ Machine& Machine::cycle( uint32_t time /* = 0 */ ) {
       cycles++;
       flags |= ATM_CYCLE_FLAG;
       if ( next != -1 ) {
+        state_t tmpState;
         lambdaAction( ATM_ON_SWITCH );
         action( ATM_ON_SWITCH );
         if ( stream_trace && callback_trace && symbols ) {
@@ -234,13 +235,17 @@ Machine& Machine::cycle( uint32_t time /* = 0 */ ) {
                           mapSymbol( next == -1 ? next : next + state_width - ATM_ON_EXIT, symbols ),
                           mapSymbol( last_trigger == -1 ? -1 : last_trigger + 1, symbols ), millis() - state_millis, cycles );
         }
-        if ( current > -1 ) action( read_state( state_table + ( current * state_width ) + ATM_ON_EXIT ) );
+        if ( current > -1 ) {
+          tmpState = read_state( state_table + ( current * state_width ) + ATM_ON_EXIT );
+          lambdaAction( tmpState );
+          action( tmpState );
+        }
         current = next;
         next = -1;
         state_millis = millis();
-        state_t std = read_state( state_table + ( current * state_width ) + ATM_ON_ENTER );
-        lambdaAction( std );
-        action( std );
+        tmpState = read_state( state_table + ( current * state_width ) + ATM_ON_ENTER );
+        lambdaAction( tmpState );
+        action( tmpState );
         if ( read_state( state_table + ( current * state_width ) + ATM_ON_LOOP ) == ATM_SLEEP ) {
           flags |= ATM_SLEEP_FLAG;
         } else {

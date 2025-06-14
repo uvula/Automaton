@@ -4,8 +4,9 @@
 
 class Atm_timer : public Machine {
  public:
-  enum { IDLE, START, WAITD, WAITMS, TRIGGER, FINISH };
-  enum { EVT_DAYCNT, EVT_DAYTIMER, EVT_MSTIMER, EVT_REPCNT, EVT_STOP, EVT_START, EVT_TOGGLE, ELSE }; // EVT_PAUSE, EVT_RESUME
+  enum { IDLE, START, WAITD, WAITMS, TRIGGER, FINISH }; //States
+  enum { EVT_DAYCNT, EVT_DAYTIMER, EVT_MSTIMER, EVT_REPCNT, EVT_STOP, EVT_START, EVT_TOGGLE, ELSE }; // Events - EVT_PAUSE, EVT_RESUME
+  enum { ENT_START, ENT_TRIGGER, EXT_WAITD, ENT_FINISH }; // Actions
 
   Atm_timer( void ) : Machine(){};
   Atm_timer& begin( uint32_t ms = 0, uint16_t repeats = 1 );
@@ -27,7 +28,6 @@ class Atm_timer : public Machine {
   
 
  private:
-  enum { ENT_START, ENT_TRIGGER, EXT_WAITD, ENT_FINISH };
   atm_timer_millis daytimer, mstimer;
   atm_counter daycounter, repcounter;
   uint32_t abscounter;

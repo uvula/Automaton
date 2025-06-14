@@ -16,8 +16,8 @@ class Machine : public LambdaSupport {
   uint8_t flags = ATM_SLEEP_FLAG;
   state_t next_trigger = -1;
   uint8_t sleep( int8_t v = -1 );
-  Machine& trace( Stream & stream );
-  Machine& traceOff( );
+  virtual Machine& trace( Stream & stream );
+  virtual Machine& traceOff( );
 
   virtual int event( int id ) = 0;  // Pure virtual methods -> make this an abstract class
   virtual void action( int id ) = 0;
