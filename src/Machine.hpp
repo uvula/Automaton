@@ -27,13 +27,13 @@ class Machine {
   void onPush( atm_connector connectors[], int id, int sub, int slots, int fill, atm_cb_push_t callback, int idx );
   void push( atm_connector connectors[], int id, int sub, int v, int up );
 
-  const state_t* state_table;
-  state_t next;
+  const state_t* state_table = nullptr;
+  state_t next  = -1;
   state_t current = -1;
   state_t last_trigger = -1;
-  const char* symbols;
+  const char* symbols = nullptr;
   uint8_t state_width;
   swcb_sym_t callback_trace;
-  Stream* stream_trace;
+  Stream* stream_trace = nullptr;
   uint32_t cycles;
 };

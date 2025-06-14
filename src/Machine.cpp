@@ -218,7 +218,7 @@ Machine& Machine::cycle( uint32_t time /* = 0 */ ) {
       flags |= ATM_CYCLE_FLAG;
       if ( next != -1 ) {
         action( ATM_ON_SWITCH );
-        if ( callback_trace ) {
+        if ( stream_trace && callback_trace && symbols ) {
           callback_trace( stream_trace, *this, symbols, mapSymbol( current == -1 ? current : current + state_width - ATM_ON_EXIT, symbols ),
                           mapSymbol( next == -1 ? next : next + state_width - ATM_ON_EXIT, symbols ),
                           mapSymbol( last_trigger == -1 ? -1 : last_trigger + 1, symbols ), millis() - state_millis, cycles );
