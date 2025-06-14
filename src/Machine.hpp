@@ -14,6 +14,8 @@ class Machine {
   uint8_t flags = ATM_SLEEP_FLAG;
   state_t next_trigger = -1;
   uint8_t sleep( int8_t v = -1 );
+  Machine& trace( Stream & stream );
+
   virtual int event( int id ) = 0;  // Pure virtual methods -> make this an abstract class
   virtual void action( int id ) = 0;
   Machine* inventory_next;

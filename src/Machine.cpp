@@ -71,6 +71,11 @@ Machine& Machine::setTrace( Stream* stream, swcb_sym_t callback, const char symb
   return *this;
 }
 
+Machine& Machine::trace( Stream & stream ) {
+    stream_trace = &stream;
+    return *this;
+}
+
 /*
  * Machine::sleep( v ) - Sets or returns the current sleep flag setting
  *
