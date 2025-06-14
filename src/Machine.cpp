@@ -76,6 +76,11 @@ Machine& Machine::trace( Stream & stream ) {
     return *this;
 }
 
+Machine& Machine::traceOff() {
+    stream_trace = nullptr;
+    return *this;
+}
+
 /*
  * Machine::sleep( v ) - Sets or returns the current sleep flag setting
  *
@@ -222,6 +227,7 @@ Machine& Machine::cycle( uint32_t time /* = 0 */ ) {
       cycles++;
       flags |= ATM_CYCLE_FLAG;
       if ( next != -1 ) {
+        lambdaAction( ATM_ON_SWITCH );
         action( ATM_ON_SWITCH );
         if ( stream_trace && callback_trace && symbols ) {
           callback_trace( stream_trace, *this, symbols, mapSymbol( current == -1 ? current : current + state_width - ATM_ON_EXIT, symbols ),
@@ -232,7 +238,9 @@ Machine& Machine::cycle( uint32_t time /* = 0 */ ) {
         current = next;
         next = -1;
         state_millis = millis();
-        action( read_state( state_table + ( current * state_width ) + ATM_ON_ENTER ) );
+        state_t std = read_state( state_table + ( current * state_width ) + ATM_ON_ENTER );
+        lambdaAction( std );
+        action( std );
         if ( read_state( state_table + ( current * state_width ) + ATM_ON_LOOP ) == ATM_SLEEP ) {
           flags |= ATM_SLEEP_FLAG;
         } else {
@@ -242,11 +250,13 @@ Machine& Machine::cycle( uint32_t time /* = 0 */ ) {
       }
       state_t i = read_state( state_table + ( current * state_width ) + ATM_ON_LOOP );
       if ( i != -1 ) {
+        lambdaAction( i );
         action( i );
       }
       for ( i = ATM_ON_EXIT + 1; i < state_width; i++ ) {
         state_t next_state = read_state( state_table + ( current * state_width ) + i );
-        if ( ( next_state != -1 ) && ( i == state_width - 1 || event( i - ATM_ON_EXIT - 1 ) || next_trigger == i - ATM_ON_EXIT - 1 ) ) {
+        // if ( ( next_state != -1 ) && ( i == state_width - 1 || event( i - ATM_ON_EXIT - 1 ) || next_trigger == i - ATM_ON_EXIT - 1 ) ) {
+        if ( ( next_state != -1 ) && ( i == state_width - 1 || lambdaEvent(i - ATM_ON_EXIT - 1) || event( i - ATM_ON_EXIT - 1 ) || next_trigger == i - ATM_ON_EXIT - 1 ) ) {
           state( next_state );
           last_trigger = i - ATM_ON_EXIT - 1;
           next_trigger = -1;
